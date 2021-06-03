@@ -12,7 +12,6 @@ public:
     enum uLevel {Beginner, Intermediate, Advance, Guru};
     UserProfile(string login, uLevel = Beginner);
     UserProfile();
-    ~UserProfile();
 
     bool operator==(const UserProfile &rhs);
     bool operator!=(const UserProfile &rhs);
@@ -56,7 +55,7 @@ private:
 
 inline double UserProfile::guess_average() const
 {
-    return _guesses? _correct_guesses / _guesses * 100 : 0.0;
+    return _guesses ? float(_correct_guesses) / float(_guesses) * 100 : 0.0;
 }
 
 inline UserProfile::UserProfile(string login, uLevel level):
@@ -92,9 +91,70 @@ inline string UserProfile::level() const
 }
 
 
+ostream &operator<<(ostream &os, const UserProfile &rhs)
+{
+    // login level login_count guess_count correct_count percentage
+    os << rhs.login() << " " <<rhs.level() << " " << rhs.login_count()
+       << " " << rhs.guess_count() << " " << rhs.guess_correct() << " "
+        << rhs.guess_average() << endl;
+    return os;
+}
+
+map<string, UserProfile::uLevel> UserProfile::_level_map;
+
+void UserProfile::init_level_map()
+{
+    _level_map["Beginner"] = Beginner;
+    _level_map["Intermediate"] = Intermediate;
+    _level_map["Advance"] = Advance;
+    _level_map["Guru"] = Guru;
+}
+
+inline void UserProfile::reset_level(const string &level)
+{
+    map<string, uLevel>::iterator it;
+    if(_level_map.empty())
+        init_level_map();
+    
+    _user_level = ((it = _level_map.find(level)) != _level_map.end()) ? it->second : Beginner;
+}
+
+istream &operator>>(istream &is, UserProfile &rhs)
+{
+    string login, level;
+    is >> login >> level;
+
+    int lcount, gcount, ccount;
+    is >> lcount >> gcount >> ccount;
+
+    rhs.reset_login(login);
+    rhs.reset_level(level);
+
+    rhs.reset_login_count(lcount);
+    rhs.reset_guess_count(gcount);
+    rhs.reset_guess_correct(ccount);
+    return is;
+}
 
 int main()
 {
-    
+    UserProfile anon;
+    cout << anon;
+
+    UserProfile anon_too;
+    cout << anon_too;
+
+    UserProfile anna("AnnaL", UserProfile::Guru);
+    cout << anna;
+
+    anna.bump_guess_count(20);
+    anna.bump_guess_correct(10);
+    anna.bump_login_count();
+
+    cout << anna;
+
+    cin >> anon;
+    cout << anon;
+
     return 0;
 }
