@@ -11,6 +11,7 @@ class Matrix
 public:
     Matrix(const elemType *); 
     Matrix();   
+    Matrix(const Matrix &);
     int row() const {return 4;}
     int col() const {return 4;}
     ostream &print(ostream &) const;
@@ -42,8 +43,15 @@ Matrix::Matrix(const elemType *arr)
     for(int i = 0; i < 4; i++)
         for(int j = 0; j < 4; j++, arr_index++)
         {
-            _matrix[i][j] = arr[arr_index];
+            this->_matrix[i][j] = arr[arr_index];
         }
+}
+
+Matrix::Matrix(const Matrix &A)
+{
+    for(int i = 0; i < 4; i++)
+        for(int j = 0; j < 4; j++)
+            this->_matrix[i][j] = A._matrix[i][j];
 }
 
 ostream &Matrix::print(ostream &os) const
