@@ -2,3 +2,8 @@
 git add .
 git commit -m "操作名称"
 git push -u origin main
+
+下载
+git fetch -all
+git reset --hard origin/main
+git pull
